@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Employee</title>
+  <style>
+    /* Reset + Font */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at top left, #1c1c1c, #0d0d0d);
+      color: #e1bee7;
+      backdrop-filter: blur(8px);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #bb86fc;
+      text-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+    }
+
+    .form-container,
+    .employee-list table {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(187, 134, 252, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 25px;
+    }
+
+    .form-container {
+      max-width: 500px;
+      margin: 30px auto;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      color: #e0b3ff;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #f3e5f5;
+      outline: none;
+    }
+
+    input[type="text"]::placeholder {
+      color: #cba6f7;
+    }
+
+    input[type="submit"] {
+      margin-top: 20px;
+      background-color: #bb86fc;
+      color: #0d0d0d;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px #bb86fc60;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #9b4dff;
+      box-shadow: 0 0 12px #bb86fc;
+    }
+
+    .employee-list {
+      max-width: 960px;
+      margin: 40px auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      color: #f3e5f5;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+      background-color: rgba(136, 0, 255, 0.2);
+      color: #ffffff;
+      font-weight: 600;
+      text-shadow: 0 0 5px #bb86fc;
+    }
+
+    .delete-btn {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background-color: #ad1457;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Add Employee</h1>
+
+  <div class="form-container">
+    <form id="employeeForm">
+      <label for="emp_id">Employee ID:</label>
+      <input type="text" id="emp_id" name="emp_id" placeholder="E.g. 1234" required />
+
+      <label for="last_name">Last Name:</label>
+      <input type="text" id="last_name" name="last_name" placeholder="E.g. Smith" required />
+
+      <label for="position">Position:</label>
+      <input type="text" id="position" name="position" placeholder="E.g. Developer" required />
+
+      <label for="office">Office:</label>
+      <input type="text" id="office" name="office" placeholder="E.g. New York" required />
+
+      <input type="submit" value="Save Employee" />
+    </form>
+  </div>
+
+  <div class="employee-list">
+    <h2>Employee List</h2>
+    <table id="employeeTable">
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Last Name</th>
+          <th>Position</th>
+          <th>Office</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Employees will be listed here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", loadEmployees);
+
+    document.getElementById("employeeForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const emp_id = document.getElementById("emp_id").value.trim();
+      const last_name = document.getElementById("last_name").value.trim();
+      const position = document.getElementById("position").value.trim();
+      const office = document.getElementById("office").value.trim();
+
+      const employee = { emp_id, last_name, position, office };
+      saveEmployee(employee);
+      consoleGlassLog(`✔ Employee added: ${last_name}`, 'add');
+
+      this.reset();
+    });
+
+    function saveEmployee(employee) {
+      const employees = JSON.parse(localStorage.getItem("employees")) || [];
+      employees.push(employee);
+      localStorage.setItem("employees", JSON.stringify(employees));
+      loadEmployees();
+    }
+
+    function loadEmployees() {
+      const employees = JSON.parse(localStorage.getItem("employees")) || [];
+      const tableBody = document.querySelector("#employeeTable tbody");
+      tableBody.innerHTML = "";
+
+      employees.forEach((employee, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${employee.emp_id}</td>
+          <td>${employee.last_name}</td>
+          <td>${employee.position}</td>
+          <td>${employee.office}</td>
+          <td><button class="delete-btn" onclick="deleteEmployee(${index})">Delete</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function deleteEmployee(index) {
+      const employees = JSON.parse(localStorage.getItem("employees")) || [];
+      const removed = employees[index]?.last_name || "Unknown";
+      employees.splice(index, 1);
+      localStorage.setItem("employees", JSON.stringify(employees));
+      loadEmployees();
+      consoleGlassLog(`✖ Deleted employee: ${removed}`, 'delete');
+    }
+
+    function consoleGlassLog(message, type) {
+      const styleMap = {
+        add: 'color: #bb86fc; background: rgba(136, 0, 255, 0.1); padding: 5px 10px; border-radius: 6px;',
+        delete: 'color: #ff4081; background: rgba(255, 64, 129, 0.1); padding: 5px 10px; border-radius: 6px;'
+      };
+      console.log(`%c${message}`, styleMap[type] || '');
+    }
+  </script>
+</body>
+</html>
