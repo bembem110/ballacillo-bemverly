@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Table</title>
+  <style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #2c0d0d, #1a0505);
+      color: #fff3e0;
+      padding: 40px 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #ff7043;
+      margin-bottom: 30px;
+    }
+    .glass {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 25px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 8px 24px rgba(255,87,34,0.2);
+    }
+    .btn {
+      background-color: #ff5722;
+      color: white;
+      padding: 10px 20px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      margin-bottom:20px;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background-color: #e64a19;
+    }
+    .form-section { display: none; margin-bottom: 20px; }
+    .form-section.active { display: block; }
+    label { display:block; margin:8px 0 4px; color:#ffccbc; }
+    input[type="text"] {
+      width:100%; padding:8px;
+      border:none; border-radius:6px;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      margin-bottom:12px;
+    }
+    input[type="text"]::placeholder { color:#ffd4c2; }
+    table {
+      width:100%; border-collapse:collapse;
+      margin-top:10px;
+    }
+    th, td {
+      padding:12px;
+      border:1px solid rgba(255,255,255,0.2);
+      text-align:left;
+    }
+    th {
+      background: rgba(255,87,34,0.4);
+      color:#fff;
+    }
+    tr:nth-child(even) {
+      background: rgba(255,255,255,0.04);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Employee List</h1>
+
+  <div class="glass">
+    <button class="btn" onclick="toggleForm()">Add Employee</button>
+
+    <div id="formSection" class="form-section glass">
+      <form id="employeeForm">
+        <label for="emp_id">Employee ID:</label>
+        <input type="text" id="emp_id" placeholder="00123" required />
+
+        <label for="last_name">Last Name:</label>
+        <input type="text" id="last_name" placeholder="Santos" required />
+
+        <label for="position">Position:</label>
+        <input type="text" id="position" placeholder="Developer" required />
+
+        <label for="office">Office:</label>
+        <input type="text" id="office" placeholder="Manila" required />
+
+        <button type="submit" class="btn">Add</button>
+      </form>
+    </div>
+
+    <table id="employeeTable" class="glass">
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Last Name</th>
+          <th>Position</th>
+          <th>Office</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const formSection = document.getElementById('formSection');
+    const form = document.getElementById('employeeForm');
+    const tbody = document.querySelector('#employeeTable tbody');
+
+    function toggleForm() {
+      formSection.classList.toggle('active');
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const emp_id = document.getElementById('emp_id').value.trim();
+      const last_name = document.getElementById('last_name').value.trim();
+      const position = document.getElementById('position').value.trim();
+      const office = document.getElementById('office').value.trim();
+
+      if (!emp_id || !last_name || !position || !office) {
+        alert('Fill all fields.');
+        return;
+      }
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${emp_id}</td>
+        <td>${last_name}</td>
+        <td>${position}</td>
+        <td>${office}</td>
+      `;
+      tbody.appendChild(row);
+      form.reset();
+      toggleForm();
+    });
+  </script>
+
+</body>
+</html>
